@@ -11,6 +11,7 @@ our @EXPORT = (
   @Test::More::EXPORT,
   qw(
       is_around
+      is_relative
   )
 );
 
@@ -36,6 +37,21 @@ sub is_around {
         diag(sprintf "         got: %f", $got);
         diag(sprintf "    expected: %f", $expected);
         diag(sprintf "       delta: %g > %g", $delta, $epsilon);
+    }
+}
+
+sub is_relative {
+    my ($got, $expected, $epsilon, $desc) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+    my $fraction = abs(1 - $got / $expected);
+    if ($fraction < $epsilon) {
+        ok(1, $desc);
+    } else {
+        ok(0, $desc);
+        diag(sprintf "         got: %f", $got);
+        diag(sprintf "    expected: %f", $expected);
+        diag(sprintf "  rel. delta: %g > %g", $fraction, $epsilon);
     }
 }
 

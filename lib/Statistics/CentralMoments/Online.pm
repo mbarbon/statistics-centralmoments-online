@@ -55,6 +55,32 @@ sub get_kurtosis {
     $_[0]->{count} * $_[0]->{m4} / ($_[0]->{m2} * $_[0]->{m2}) - 3;
 }
 
+sub merge {
+    my ($self, $other) = @_;
+    my ($n_a, $mean_a, $m2_a, $m3_a, $m4_a) = @{$self->get_moments};
+    my ($n_b, $mean_b, $m2_b, $m3_b, $m4_b) = @{$other->get_moments};
+
+    my $delta = $mean_b - $mean_a;
+    my $n = $n_a + $n_b;
+    my $delta_sq = $delta * $delta;
+    my $mean = ($n_a * $mean_a + $n_b * $mean_b) / $n;
+
+    my $n_a_b = $n_a * $n_b;
+    my $n_a_sq = $n_a * $n_a;
+    my $n_b_sq = $n_b * $n_b;
+    my $n_sq = $n * $n;
+    my $m2 = $m2_a + $m2_b + $delta_sq * ($n_a_b / $n);
+    my $m3 = $m3_a + $m3_b +
+        $delta_sq * $delta * (($n_a_b * ($n_a - $n_b)) / $n_sq) +
+        3 * $delta * (($n_a * $m2_b - $n_b * $m2_a) / $n);
+    my $m4 = $m4_a + $m4_b +
+        $delta_sq * $delta_sq * (($n_a_b * ($n_a_sq - $n_a_b + $n_b_sq) / ($n_sq * $n))) +
+        6 * $delta_sq * (($n_a_sq * $m2_b + $n_b_sq * $m2_a) / $n_sq) +
+        4 * $delta * (($n_a * $m3_b - $n_b * $m3_a) / $n);
+
+    @{$self}{qw(count mean m2 m3 m4)} = ($n, $mean, $m2, $m3, $m4);
+}
+
 1;
 
 __END__
@@ -66,6 +92,8 @@ __END__
     $cm->add_data(\@data);
     my $mean = $cm->get_mean;
     my ($count, $mean, $m2, $m3, $m4) = @{$cm->get_moments};
+
+    $cm->merge($other_cm);
 
 =head1 DESCRIPTION
 
@@ -114,5 +142,11 @@ Returns the (estimated) skewness of the distribution.
     my $kurtosis = $cm->get_kurtosis;
 
 Returns the (estimated) excess kurtosis of the distribution.
+
+=head2 merge
+
+    $cm->merge($other_cm);
+
+Merge C<$other_cm> into C<$cm>. It does not alter C<$other_cm>.
 
 =cut
