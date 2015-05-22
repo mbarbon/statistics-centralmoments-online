@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 
+BEGIN { srand(0); }
 use t::lib::Test::CentralMoments;
 use List::Util qw(sum);
 
