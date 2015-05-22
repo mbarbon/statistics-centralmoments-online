@@ -28,7 +28,7 @@ __END__
 Computes the statistical central moments for a set of values, using a
 single-pass algorithm.
 
-It uses Timothy Terriberry algorithm, as described in
+It uses Timothy Terriberry's algorithm, as described in
 L<http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance>.
 
 =head1 METHODS
