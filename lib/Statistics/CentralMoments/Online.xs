@@ -149,22 +149,24 @@ scmo_t::merge(scmo_t *other)
       const double m4_b = other->m4;
       const double delta = mean_b - mean_a;
 
-      THIS->count = count_a + count_b;
+      const unsigned int count = count_a + count_b;
+      THIS->count = count;
+
       const double delta_sq = delta * delta;
-      THIS->mean = (count_a * mean_a + count_b * mean_b) / (double)(THIS->count);
+      THIS->mean = (count_a * mean_a + count_b * mean_b) / (double)count;
       const double count_a_b = count_a * count_b;
       const double count_a_sq = count_a * count_a;
       const double count_b_sq = count_b * count_b;
-      const double count_sq = THIS->count * THIS->count;
-      THIS->m2 = m2_a + m2_b + delta_sq * ((double)count_a_b / (double)THIS->count);
+      const double count_sq = count * count;
+      THIS->m2 = m2_a + m2_b + delta_sq * ((double)count_a_b / (double)count);
 
       THIS->m3 = m3_a + m3_b +
                  delta_sq * delta * ((double)(count_a_b * (count_a - count_b)) / (double)count_sq) +
-                 3. * delta * ((count_a * m2_b - count_b * m2_a) / (double)THIS->count);
+                 3. * delta * ((count_a * m2_b - count_b * m2_a) / (double)count);
       THIS->m4 = m4_a + m4_b +
                  delta_sq * delta_sq *
                  ((double)count_a_b * (double)(count_a_sq - count_a_b + count_b_sq) /
-                    (double)(count_sq * THIS->count)) +
+                    (double)(count_sq * count)) +
                  6. * delta_sq * ((count_a_sq * m2_b + count_b_sq * m2_a) / (double)count_sq) +
-                 4. * delta * ((count_a * m3_b - count_b * m3_a) / THIS->count);
+                 4. * delta * ((count_a * m3_b - count_b * m3_a) / (double)count);
     }
