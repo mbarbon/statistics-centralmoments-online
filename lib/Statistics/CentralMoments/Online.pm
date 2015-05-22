@@ -9,7 +9,7 @@ use warnings;
 require XSLoader;
 XSLoader::load('Statistics::CentralMoments::Online', $VERSION);
 
-sub new {
+sub _new {
     my ($class) = @_;
     my $self = bless {
         count => 0,
@@ -22,7 +22,7 @@ sub new {
     return $self;
 }
 
-sub add_data {
+sub _add_data {
     my ($self, $data) = @_;
     my ($n, $mean, $m2, $m3, $m4) = @{$self}{qw(count mean m2 m3 m4)};
 
@@ -44,23 +44,23 @@ sub add_data {
     @{$self}{qw(count mean m2 m3 m4)} = ($n, $mean, $m2, $m3, $m4);
 }
 
-sub get_moments { [@{$_[0]}{qw(count mean m2 m3 m4)}] }
-sub get_count { $_[0]->{count} }
-sub get_mean { $_[0]->{mean} }
+sub _get_moments { [@{$_[0]}{qw(count mean m2 m3 m4)}] }
+sub _get_count { $_[0]->{count} }
+sub _get_mean { $_[0]->{mean} }
 
-sub get_variance {
+sub _get_variance {
     $_[0]->{count} >= 2 ? $_[0]->{m2} / ($_[0]->{count} - 1) : 0
 }
 
-sub get_skewness {
+sub _get_skewness {
     sqrt($_[0]->{count}) * $_[0]->{m3} * $_[0]->{m2} ** 1.5;
 }
 
-sub get_kurtosis {
+sub _get_kurtosis {
     $_[0]->{count} * $_[0]->{m4} / ($_[0]->{m2} * $_[0]->{m2}) - 3;
 }
 
-sub merge {
+sub _merge {
     my ($self, $other) = @_;
     my ($n_a, $mean_a, $m2_a, $m3_a, $m4_a) = @{$self->get_moments};
     my ($n_b, $mean_b, $m2_b, $m3_b, $m4_b) = @{$other->get_moments};

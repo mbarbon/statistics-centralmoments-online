@@ -4,6 +4,10 @@ use t::lib::Test::CentralMoments;
 
 my $cm = Statistics::CentralMoments::Online->new;
 
+is($cm->get_count, 0);
+is_around($cm->get_mean, 0, 1e-6);
+is_around($cm->get_variance, 0, 1e-6);
+
 $cm->add_data([5, 6, 7]);
 $cm->add_data([8]);
 $cm->add_data([8, 7, 6, 7, 8, 9, 2]);
