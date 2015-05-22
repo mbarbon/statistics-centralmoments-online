@@ -4,6 +4,11 @@ package Statistics::CentralMoments::Online;
 use strict;
 use warnings;
 
+# VERSION
+
+require XSLoader;
+XSLoader::load('Statistics::CentralMoments::Online', $VERSION);
+
 sub new {
     my ($class) = @_;
     my $self = bless {
